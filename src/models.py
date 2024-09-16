@@ -9,22 +9,49 @@ Base = declarative_base()
 
 class User(Base):
     __tablename__ = 'user'
-    # Here we define columns for the table person
-    # Notice that each column is also a normal Python instance attribute.
     userId = Column(Integer, primary_key=True)
     userName = Column(String(25), unique=True)
-    firstName = Column(String(30), nullable=False)
-    lastName = Column(String(30), nullable=False)
+    firstName = Column(String(30),nullable=False)
+    lastName = Column(String(30),nullable=False)
     email = Column(String(40), nullable=False)
     follower = relationship("Follower", backref="follower")
     post = relationship("Post", backref="post")
     comment = relationship("Comment", backref="comment")
+
 
 class Follower(Base):
     __tablename__ = 'follower'
     ID = Column(Integer, primary_key=True)
     userFromId = Column(Integer, ForeignKey('user.userId'))
     userToId = Column(Integer, ForeignKey('user.userId'))
+     
+
+class Post(Base):
+    __tablename__ = 'post'
+    ID = Column(Integer, primary_key=True)
+    userId = Column(Integer, ForeignKey('user.userId'))
+    media = relationship("Media", backref="media")
+    comment = relationship("Comment", backref="comment")
+    
+
+class Media(Base):
+    __tablename__ = 'media'
+    ID = Column(Integer, primary_key=True)
+    type = Column(String)
+    url = Column(String(50))
+    postId = Column(Integer, ForeignKey('post.ID'))
+
+
+class Comment(Base):
+    __tablename__ = 'comment'
+    ID = Column(Integer, primary_key=True)
+    commentText = Column(String(120))
+    authorId = Column(Integer, ForeignKey('user.userId'))
+    postId = Column(Integer, ForeignKey('post.ID'))
+
+
+    def to_dict(self):
+        return {}
 
 
 ## Draw from SQLAlchemy base
